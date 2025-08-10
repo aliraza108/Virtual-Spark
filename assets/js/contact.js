@@ -13,6 +13,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 message: document.getElementById('message').value.trim()
             };
 
+            // Client-side validation
+            if (!formData.email || !formData.phone) {
+                alert('Email and phone are required');
+                return;
+            }
+            if (!/^\+?[0-9\s-]+$/.test(formData.phone)) {
+                alert('Please enter a valid phone number (digits, spaces, or dashes only)');
+                return;
+            }
+
             console.log('Form data being sent:', formData);
 
             try {
@@ -23,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     body: JSON.stringify(formData)
                 });
+
+                console.log('Fetch response:', { status: response.status, statusText: response.statusText });
 
                 if (response.ok) {
                     alert('Form submitted successfully!');

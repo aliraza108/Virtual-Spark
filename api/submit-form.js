@@ -2,15 +2,26 @@ const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
+        console.error('Invalid method:', req.method);
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     const { fullname, lastname, email, phone, topic, message } = req.body;
 
-    // Basic validation
+    // Log received data for debugging
+    console.log('Received form data:', { fullname, lastname, email, phone, topic, message });
+
+    // Validate required fields
     if (!email || !phone) {
         console.error('Validation failed: Email and phone are required', { email, phone });
         return res.status(400).json({ error: 'Email and phone are required' });
+    }
+
+    // Clean and validate phone number
+    let cleanedPhone = phone.replace(/[^0-9]/g, '');
+    if (!cleanedPhone || isNaN(cleanedPhone)) {
+        console.error('Invalid phone number:', phone);
+        return res.status(400).json({ error: 'Invalid phone number format' });
     }
 
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -31,12 +42,12 @@ module.exports = async (req, res) => {
                     name: fullname || null,
                     surname: lastname || null,
                     mail: email,
-                    number: phone ? parseFloat(phone.replace(/[^0-9.]/g, '')) : null, // Clean and convert phone to numeric
+                    number: parseFloat(cleanedPhone), // Ensure numeric type
                     subject: topic || null,
                     message: message || null
                 }
             ])
-            .select(); // Return inserted data for verification
+            .select();
 
         if (error) {
             console.error('Supabase insert error:', {
