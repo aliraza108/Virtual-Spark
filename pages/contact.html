@@ -182,7 +182,7 @@
                     <div class="col-lg-7">
                         <div class="blog-contact-form form-2">
                             <div class="request-form">
-                                <form action="../mail.php" method="post" id="ajax_contact" class="form-horizontal">
+                                <form action="../mail.php" method="post" id="contact-form" class="form-horizontal">
                                     <div class="form-group row">
                                         <div class="col-md-6">
                                             <div class="form-item">
@@ -234,8 +234,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="form-messages"></div>
-
+                                     <div class="ajax-response"></div>
 <div class="submit-btn">
     <button id="submit" class="rr-primary-btn" type="submit">Send Message</button>
 </div>
@@ -312,6 +311,15 @@
         <script src="../assets/js/main.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="../assets/js/contact.js"></script>
+        <!-- jQuery (only once) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- your custom AJAX handler (after jQuery) -->
+<script src="../assets/js/ajax-form.js"></script>
+
+<!-- other scripts that don't attach to the form, if needed -->
+<script src="../assets/js/main.js"></script>
+
 
     </body>
 </html>

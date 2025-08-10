@@ -1,48 +1,55 @@
+// assets/js/ajax-form.js
 $(function() {
+  var form = $('#contact-form');
+  var formMessages = $('.ajax-response');
+  var submitBtn = $('#submit');
 
-	// Get the form.
-	var form = $('#contact-form');
+  // If the form isn't found, bail
+  if (!form.length) return;
 
-	// Get the messages div.
-	var formMessages = $('.ajax-response');
+  form.on('submit', function(e) {
+    e.preventDefault(); // crucial: prevent normal navigation
 
-	// Set up an event listener for the contact form.
-	$(form).submit(function(e) {
-		// Stop the browser from submitting the form.
-		e.preventDefault();
+    // Clear previous messages
+    formMessages.removeClass('success error').text('');
 
-		// Serialize the form data.
-		var formData = $(form).serialize();
+    // Disable button to prevent double submit
+    if (submitBtn.length) submitBtn.prop('disabled', true).addClass('loading');
 
-		// Submit the form using AJAX.
-		$.ajax({
-			type: 'POST',
-			url: $(form).attr('action'),
-			data: formData
-		})
-		.done(function(response) {
-			// Make sure that the formMessages div has the 'success' class.
-			$(formMessages).removeClass('error');
-			$(formMessages).addClass('success');
+    var formData = form.serialize();
 
-			// Set the message text.
-			$(formMessages).text(response);
-
-			// Clear the form.
-			$('#contact-form input,#contact-form textarea').val('');
-		})
-		.fail(function(data) {
-			// Make sure that the formMessages div has the 'error' class.
-			$(formMessages).removeClass('success');
-			$(formMessages).addClass('error');
-
-			// Set the message text.
-			if (data.responseText !== '') {
-				$(formMessages).text(data.responseText);
-			} else {
-				$(formMessages).text('Oops! An error occured and your message could not be sent.');
-			}
-		});
-	});
-
+    $.ajax({
+      type: 'POST',
+      url: form.attr('action'),    // /mail.php
+      data: formData,
+      dataType: 'json',
+      cache: false,
+      timeout: 15000
+    })
+    .done(function(response) {
+      if (response && response.status === 'success') {
+        formMessages.removeClass('error').addClass('success').text(response.message || 'Thanks — saved!');
+        form[0].reset(); // clear form
+        // optionally hide message after 4 seconds
+        setTimeout(function() {
+          formMessages.fadeOut(300, function(){ $(this).show().text('').removeClass('success'); });
+        }, 4000);
+      } else {
+        var m = (response && response.message) ? response.message : 'Submission failed.';
+        formMessages.removeClass('success').addClass('error').text(m);
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      var msg = 'Oops! An error occurred.';
+      try {
+        var json = jqXHR.responseJSON;
+        if (json && json.message) msg = json.message;
+        else if (jqXHR.responseText) msg = jqXHR.responseText;
+      } catch (e) {}
+      formMessages.removeClass('success').addClass('error').text(msg);
+    })
+    .always(function() {
+      if (submitBtn.length) submitBtn.prop('disabled', false).removeClass('loading');
+    });
+  });
 });
