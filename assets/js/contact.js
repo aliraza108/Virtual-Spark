@@ -5,13 +5,15 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
 
             const formData = {
-                fullname: document.getElementById('fullname').value,
-                lastname: document.getElementById('lastname').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                topic: document.getElementById('topic').value,
-                message: document.getElementById('message').value
+                fullname: document.getElementById('fullname').value.trim(),
+                lastname: document.getElementById('lastname').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                topic: document.getElementById('topic').value.trim(),
+                message: document.getElementById('message').value.trim()
             };
+
+            console.log('Form data being sent:', formData);
 
             try {
                 const response = await fetch('/api/submit-form', {
@@ -27,12 +29,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     form.reset();
                 } else {
                     const errorData = await response.json();
-                    alert('Error submitting form: ' + errorData.error);
+                    console.error('Server error:', errorData);
+                    alert('Error submitting form: ' + errorData.error + (errorData.details ? ' - ' + errorData.details : ''));
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the form.');
+                console.error('Fetch error:', error);
+                alert('An error occurred while submitting the form: ' + error.message);
             }
         });
+    } else {
+        console.error('Contact form not found');
     }
 });
