@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "builds": [
     {
@@ -18,8 +18,8 @@
   ],
   "routes": [
     {
-      "src": "/api/submit-form",
-      "dest": "/api/submit-form.js"
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml"
     },
     {
       "src": "/(.*)",

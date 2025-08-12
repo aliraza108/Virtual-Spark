@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Allow: /sitemap.xml
 
 Sitemap: https://virtual-spark.vercel.app/sitemap.xml
